@@ -112,6 +112,15 @@
       margin: 0px;
     }
   </style>
+  <style id="responsive-fit-style">
+    /* The 585x809 pages are scaled to fit the viewport by the responsive-fit script. */
+    html, body {
+      overflow: hidden;
+    }
+    #pagedeck {
+      transform-origin: 50% 50%;
+    }
+  </style>
   <style>
     html, body {
       width: 100%;
@@ -3451,6 +3460,35 @@
         handleWebComponentsReady, false);
       window.addEventListener('adinitialized',
         handleAdInitialized, false);
+    })();
+  </script>
+  <script type="text/javascript" id="responsive-fit">
+    (function() {
+      // Design size of every gwd-page (data-gwd-width / data-gwd-height).
+      var PAGE_WIDTH = 585;
+      var PAGE_HEIGHT = 809;
+      // Space kept above and below the page when the screen height is the limit.
+      var VERTICAL_MARGIN = 24;
+
+      /**
+       * Scales the page deck so a whole page fits inside the viewport,
+       * shrinking on small screens and never enlarging past 100%.
+       */
+      function fitToViewport() {
+        var deck = document.getElementById('pagedeck');
+        if (!deck) return;
+        var vw = window.innerWidth || document.documentElement.clientWidth;
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var scale = Math.min(vw / PAGE_WIDTH,
+          (vh - 2 * VERTICAL_MARGIN) / PAGE_HEIGHT, 1);
+        deck.style.transform = 'scale(' + scale + ')';
+      }
+
+      fitToViewport();
+      window.addEventListener('DOMContentLoaded', fitToViewport, false);
+      window.addEventListener('load', fitToViewport, false);
+      window.addEventListener('resize', fitToViewport, false);
+      window.addEventListener('orientationchange', fitToViewport, false);
     })();
   </script>
 </body>
